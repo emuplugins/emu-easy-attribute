@@ -2,7 +2,7 @@
 /**
  * Plugin Name: Emu Easy Attribute
  * Description: Plugin para gerenciamento de atributos de arquivos.
- * Version: 1.0
+ * Version: 1.0.1
  * Author: Seu Nome
  */
 
