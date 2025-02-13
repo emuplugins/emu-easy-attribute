@@ -1,6 +1,6 @@
 <?php
 class Emu_Easy_Attribute_Updater {
-    private $api_url = 'https://raw.githubusercontent.com/tonnynho2004/emu-easy-attribute/refs/heads/main/info.json';
+    private $api_url = 'https://raw.githubusercontent.com/emuplugins/emu-easy-attribute/refs/heads/main/info.json';
 
     public function __construct() {
         add_filter('plugins_api', [$this, 'plugin_info'], 20, 3);
