@@ -1,9 +1,9 @@
 <?php
 /**
  * Plugin Name: Emu Easy Attribute
- * Description: Plugin para gerenciamento de atributos de arquivos.
+ * Description: Plugin para atribuição de ativos gratuitos
  * Version: 1.0.1
- * Author: Seu Nome
+ * Author: Emu Plugins
  */
 
 if (!defined('ABSPATH')) {
