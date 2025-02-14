@@ -89,9 +89,11 @@ function emu_render_options_page() {
         }
     }
 }
-?>
 
-<?php
+
+
+
+if (isset($_GET['page']) && $_GET['page'] === 'emu_options_page') {
 // Carregar o script no painel
 function emu_enqueue_scripts() {
     wp_enqueue_script('emu-script', plugin_dir_url(__DIR__) . 'assets/script.js', array(), null, true);
@@ -107,9 +109,6 @@ function emu_add_update_nonce() {
     </script>
     <?php
 }
-
-
-if (isset($_GET['page']) && $_GET['page'] === 'emu_options_page') {
     ?>
     <script>
     var ajaxurl = "<?php echo admin_url('admin-ajax.php'); ?>";
