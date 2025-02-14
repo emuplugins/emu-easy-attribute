@@ -16,7 +16,8 @@ function emu_register_options_page() {
         20                                  // Posição no menu
     );
 }
+
 add_action('admin_menu', 'emu_register_options_page');
+
 require_once plugin_dir_path(__FILE__) . 'templates/render_page.php';
 require_once plugin_dir_path(__FILE__) . 'update_posts.php';
-
