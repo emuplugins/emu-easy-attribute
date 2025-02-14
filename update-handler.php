@@ -1,12 +1,5 @@
+
 <?php
-
-$plugin_slug = basename(__DIR__);
-$plugin_dir = basename(__DIR__); // Mantemos o diretório original para referência
-
-// Remove sufixo '-main' se presente
-if (substr($plugin_slug, -5) === '-main') {
-    $plugin_slug = substr($plugin_slug, 0, -5);
-}
 
 if (!class_exists('Emu_Updater')) {
     class Emu_Updater {
@@ -52,13 +45,7 @@ if (!class_exists('Emu_Updater')) {
             return $res;
         }
 
-
-
-
-        
-
-
-        public function check_for_update($transient) {
+           public function check_for_update($transient) {
             if (empty($transient->checked)) {
                 return $transient;
             }
@@ -118,20 +105,7 @@ if (!class_exists('Emu_Updater')) {
     }
 }
 
-
-
-
 new Emu_Updater($plugin_slug, $plugin_dir);
-
-
-
-
-
-
-
-
-
-
 
 // Captura variáveis no contexto dos closures
 add_filter('plugin_action_links_' . $plugin_dir . '/' . $plugin_slug . '.php', function($actions) use ($plugin_dir) {
