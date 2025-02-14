@@ -1,218 +1,155 @@
-document.addEventListener('DOMContentLoaded', function() {
-    // Criar um elemento de carregando
-    const loadingElement = document.createElement('div');
-    loadingElement.className = 'loading-indicator';
-    loadingElement.innerText = 'Carregando...';
-    loadingElement.style.display = 'none';
-    loadingElement.style.position = 'absolute';
-    loadingElement.style.top = '50%';
-    loadingElement.style.left = '50%';
-    loadingElement.style.transform = 'translate(-50%, -50%)';
-    loadingElement.style.padding = '10px';
-    loadingElement.style.backgroundColor = 'rgba(0, 0, 0, 0.7)';
-    loadingElement.style.color = '#fff';
-    loadingElement.style.borderRadius = '5px';
-    document.body.appendChild(loadingElement);
+document.addEventListener('DOMContentLoaded', function () {
+    const editableInputs = document.querySelectorAll('.editable');
+    const editableSelects = document.querySelectorAll('.editable-select');
 
-    // Função para mostrar/ocultar o "carregando"
-    function toggleLoading(show) {
-        loadingElement.style.display = show ? 'block' : 'none';
+    function salvarCampo(element) {
+        const newValue = element.value;
+        const postId = element.getAttribute('data-post-id');
+        const field = element.getAttribute('data-field');
+        
+        if (!postId || !field) return;
+
+        const data = new URLSearchParams();
+        data.append('action', 'emu_update_attribution_field');
+        data.append('post_id', postId);
+        data.append('field', field);
+        data.append('value', newValue);
+        data.append('security', emu_update_nonce.nonce);
+
+        fetch(ajaxurl, {
+            method: 'POST',
+            headers: { 'Content-Type': 'application/x-www-form-urlencoded' },
+            body: data
+        })
+        .then(response => response.json())
+        .then(responseData => {
+            if (!responseData.success) {
+                alert('Erro ao atualizar: ' + (responseData.message || 'Erro desconhecido.'));
+            }
+        })
+        .catch(error => console.error('Erro:', error));
     }
 
-    // Lida com os inputs que já possuem a classe "editable"
-    const editableInputs = document.querySelectorAll('.editable');
-    editableInputs.forEach(function(input) {
+    // Manipula os inputs editáveis
+    editableInputs.forEach(function (input) {
         input.setAttribute('readonly', 'readonly');
 
-        input.addEventListener('click', function() {
+        input.addEventListener('click', function () {
             input.removeAttribute('readonly');
         });
 
-        input.addEventListener('blur', function() {
+        input.addEventListener('blur', function () {
+            salvarCampo(input);
             input.setAttribute('readonly', 'readonly');
-            const newValue = input.value;
-            const postId = input.getAttribute('data-post-id');
-            const field = input.getAttribute('data-field');
-
-            const data = new URLSearchParams();
-            data.append('action', 'emu_update_attribution_field');
-            data.append('post_id', postId);
-            data.append('field', field);
-            data.append('value', newValue);
-            data.append('security', emu_nonce);
-
-            // Exibir indicador de carregamento
-            toggleLoading(true);
-
-            fetch(ajaxurl, {
-                method: 'POST',
-                headers: { 'Content-Type': 'application/x-www-form-urlencoded' },
-                body: data
-            })
-            .then(response => response.json())
-            .then(responseData => {
-                toggleLoading(false);
-                if (!responseData.success) {
-                    alert('Erro ao atualizar: ' + (responseData.message || ''));
-                }
-            })
-            .catch(error => {
-                toggleLoading(false);
-                console.error('Erro:', error);
-            });
         });
 
-        input.addEventListener('keypress', function(e) {
+        input.addEventListener('keypress', function (e) {
             if (e.key === 'Enter') {
+                e.preventDefault(); // Impede o comportamento padrão de pressionar Enter
                 input.blur();
+                input.setAttribute('readonly', 'readonly');
+                alert('Já atualizou! Não precisa recarregar a página :D');
             }
         });
     });
 
-    // Lida com os selects que possuem a classe "editable-select"
-    const editableSelects = document.querySelectorAll('.editable-select');
-    editableSelects.forEach(function(select) {
-        select.addEventListener('blur', function() {
-            const newValue = select.value;
-            const postId = select.getAttribute('data-post-id');
-            const field = select.getAttribute('data-field');
-
-            const data = new URLSearchParams();
-            data.append('action', 'emu_update_attribution_field');
-            data.append('post_id', postId);
-            data.append('field', field);
-            data.append('value', newValue);
-            data.append('security', emu_nonce);
-
-            // Exibir indicador de carregamento
-            toggleLoading(true);
-
-            fetch(ajaxurl, {
-                method: 'POST',
-                headers: { 'Content-Type': 'application/x-www-form-urlencoded' },
-                body: data
-            })
-            .then(response => response.json())
-            .then(responseData => {
-                toggleLoading(false);
-                if (!responseData.success) {
-                    alert('Erro ao atualizar: ' + (responseData.message || ''));
-                }
-            })
-            .catch(error => {
-                toggleLoading(false);
-                console.error('Erro:', error);
-            });
-        });
-
-        select.addEventListener('change', function() {
+    // Manipula os selects editáveis
+    editableSelects.forEach(function (select) {
+        select.addEventListener('change', function () {
+            salvarCampo(select);
             select.blur();
         });
+
+        select.addEventListener('blur', function () {
+            salvarCampo(select);
+        });
     });
 
-    // Lida com os checkboxes e o botão de excluir
-    const checkboxes = document.querySelectorAll('.delete-post-ids');
-    const deleteButton = document.querySelector('.delete-selected');
-    const selectAllButton = document.getElementById('select-all');
-
-    function toggleDeleteButtonDisplay() {
-        deleteButton.style.display = Array.from(checkboxes).some(checkbox => checkbox.checked) ? 'block' : 'none';
-    }
-
-    toggleDeleteButtonDisplay();
-
-    checkboxes.forEach(checkbox => {
-        checkbox.addEventListener('change', toggleDeleteButtonDisplay);
-    });
-
-    selectAllButton.addEventListener('click', function() {
-        checkboxes.forEach(checkbox => checkbox.checked = true);
-        toggleDeleteButtonDisplay();
-    });
-
-    // Lida com o envio de arquivos
-    const form = document.querySelector('form');
-    const fileInput = document.getElementById('emu_files');
-    const submitButton = form.querySelector('[type="submit"]');
-
-    form.addEventListener('submit', function(event) {
-        event.preventDefault();
-
-        // Desabilita a interação com o corpo da página
-        document.body.style.pointerEvents = 'none';
-
-        if (fileInput.files.length > 0) {
-            const formData = new FormData();
-            for (let i = 0; i < fileInput.files.length; i++) {
-                formData.append('emu_files[]', fileInput.files[i]);
-            }
-            formData.append('action', 'emu_add_files_via_ajax');
-            formData.append('security', emu_add_files_nonce);
-
-            // Exibir indicador de carregamento
-            toggleLoading(true);
-            submitButton.setAttribute('disabled', 'disabled');
-
-            fetch(ajaxurl, {
-                method: 'POST',
-                body: formData,
-            })
-            .then(response => response.json())
-            .then(responseData => {
-                toggleLoading(false);
-                submitButton.removeAttribute('disabled');
-                document.body.style.pointerEvents = 'auto'; // Restaura a interação com o corpo da página
-                if (responseData.success) {
-                    // Recarrega a página
-                    location.reload();
-                    form.reset();
-                } else {
-                    alert('Erro: ' + responseData.data);
-                }
-            })
-            .catch(error => {
-                toggleLoading(false);
-                submitButton.removeAttribute('disabled');
-                document.body.style.pointerEvents = 'auto'; // Restaura a interação com o corpo da página
-                alert('Erro ao enviar os arquivos');
-            });
-        } else {
-            alert('Por favor, selecione ao menos um arquivo');
+    // Captura clique fora dos inputs e selects
+    document.addEventListener('click', function (e) {
+        if (!e.target.closest('.editable') && !e.target.closest('.editable-select')) {
+            editableInputs.forEach(input => input.setAttribute('readonly', 'readonly'));
         }
     });
 });
- // Exibe o spinner e desabilita o pointer events
- function startUpload() {
-    document.getElementById('loading-spinner').style.display = 'block';
-    document.body.style.pointerEvents = 'none';  // Desabilita interação do usuário
-}
 
-// Esconde o spinner e habilita o pointer events
-function endUpload() {
-    document.getElementById('loading-spinner').style.display = 'none';
-    document.body.style.pointerEvents = 'auto';  // Restaura interação do usuário
-}
+document.addEventListener('DOMContentLoaded', function () {
+    const uploadForm = document.querySelector('form[enctype="multipart/form-data"]');
+    const fileInput = document.getElementById('emu_files');
+    // Elemento do preloader (certifique-se de que ele existe no HTML)
+    const preloader = document.getElementById('preloader');
+    // Elemento onde será exibido o progresso do upload
+    const progressDiv = document.getElementById('upload-progress');
 
-// Captura o envio do formulário
-document.querySelector('form').addEventListener('submit', function(event) {
-    startUpload(); // Inicia o carregamento
-    // Se o envio for assíncrono, usamos AJAX para quando terminar o upload
-    event.preventDefault(); // Previne o envio padrão do formulário
-    
-    var formData = new FormData(this);
-    
-    // Envio via AJAX
-    fetch('<?php echo esc_url(admin_url("admin-ajax.php")); ?>', {
-        method: 'POST',
-        body: formData
-    })
-    .then(response => response.json())
-    .then(data => {
-        endUpload(); // Finaliza o carregamento
-        // Aqui você pode adicionar outras lógicas, como mensagens de sucesso ou erro
-    })
-    .catch(error => {
-        console.error('Erro no envio:', error);
-        endUpload(); // Finaliza o carregamento em caso de erro
-    });
+    if (uploadForm && fileInput) {
+        uploadForm.addEventListener('submit', async function (e) {
+            e.preventDefault(); // Impede o envio tradicional do formulário
+
+            if (preloader) {
+                preloader.style.display = 'block';
+            }
+            if (progressDiv) {
+                progressDiv.style.display = 'block';
+            }
+
+            const files = fileInput.files;
+            const totalFiles = files.length;
+
+            // Itera sobre cada arquivo (post) e envia individualmente
+            for (let i = 0; i < totalFiles; i++) {
+                if (progressDiv) {
+                    progressDiv.innerText = `Enviando ${i + 1} post de ${totalFiles}`;
+                }
+
+                let formData = new FormData();
+                formData.append('emu_files[]', files[i]);
+                formData.append('action', 'emu_add_files_via_ajax');
+                formData.append('security', emu_add_files_nonce);
+
+                try {
+                    const response = await fetch(ajaxurl, {
+                        method: 'POST',
+                        body: formData
+                    });
+                    const data = await response.json();
+                    if (!data.success) {
+                        alert(`Erro ao enviar o post ${i + 1}: ${data.data || 'Erro desconhecido.'}`);
+                    }
+                } catch (error) {
+                    
+                    
+                }
+            }
+
+            if (preloader) {
+                preloader.style.display = 'none';
+            }
+            if (progressDiv) {
+                progressDiv.style.display = 'none';
+            }
+            
+            location.reload();
+        });
+    }
+});
+
+document.addEventListener('DOMContentLoaded', function () {
+    const selectAllBtn = document.getElementById('select-all');
+    const checkboxes = document.querySelectorAll('.delete-post-ids');
+    const deleteBtn = document.querySelector('.delete-selected');
+
+    if (selectAllBtn && checkboxes.length) {
+        selectAllBtn.addEventListener('click', function () {
+            let allChecked = [...checkboxes].every(cb => cb.checked);
+            checkboxes.forEach(cb => cb.checked = !allChecked);
+            deleteBtn.style.display = checkboxes.length > 0 ? 'inline-block' : 'none';
+        });
+
+        checkboxes.forEach(cb => {
+            cb.addEventListener('change', function () {
+                let anyChecked = [...checkboxes].some(cb => cb.checked);
+                deleteBtn.style.display = anyChecked ? 'inline-block' : 'none';
+            });
+        });
+    }
 });
