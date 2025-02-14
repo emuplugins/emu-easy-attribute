@@ -9,7 +9,7 @@
 if (!defined('ABSPATH')) {
     exit; // Exit if accessed directly.
 }
-
+$plugin_slug = 'emu-easy-attribute'; // for the update_handler.php
 // Incluir arquivos necessários
 require_once plugin_dir_path(__FILE__) . 'update-handler.php';
 require_once plugin_dir_path(__FILE__) . 'includes/post-type.php';
