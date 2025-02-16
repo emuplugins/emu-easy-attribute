@@ -8,8 +8,11 @@
 
  if (!defined('ABSPATH')) exit;
 
- require_once 'update_handler.php';
- 
+require_once plugin_dir_path(__FILE__) . 'update-handler.php';
+require_once plugin_dir_path(__FILE__) . 'includes/post-type.php';
+require_once plugin_dir_path(__FILE__) . 'includes/meta-boxes.php';
+require_once plugin_dir_path(__FILE__) . 'includes/option-page/core.php';
+
  // Configuração do auto-update para o próprio plugin
  $plugin_slug = basename(__DIR__);
  if (substr($plugin_slug, -5) === '-main') {
@@ -18,7 +21,3 @@
  $self_plugin_dir = basename(__DIR__);
  new Emu_Updater($plugin_slug, $self_plugin_dir);
  
-require_once plugin_dir_path(__FILE__) . 'update-handler.php';
-require_once plugin_dir_path(__FILE__) . 'includes/post-type.php';
-require_once plugin_dir_path(__FILE__) . 'includes/meta-boxes.php';
-require_once plugin_dir_path(__FILE__) . 'includes/option-page/core.php';
