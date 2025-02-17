@@ -15,6 +15,8 @@ add_action('init', function () {
     load_plugin_textdomain('emu-easy-attribute', false, false);
 });
 
+// Carrega os arquivos necessários
+
 require_once plugin_dir_path(__FILE__) . 'includes/post-type.php';
 require_once plugin_dir_path(__FILE__) . 'includes/meta-boxes.php';
 require_once plugin_dir_path(__FILE__) . 'includes/option-page/core.php';
