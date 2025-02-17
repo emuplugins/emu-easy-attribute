@@ -2,7 +2,7 @@
 /**
  * Plugin Name: Emu Easy Attribute
  * Description: Plugin para atribuição de ativos gratuitos
- * Version: 1.1.0
+ * Version: 1.1.2
  * Author: Emu Plugins
  */
 if(!is_defined('ABSPATH')){
