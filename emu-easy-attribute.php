@@ -5,6 +5,15 @@
  * Version: 1.1.0
  * Author: Emu Plugins
  */
+if(!is_defined('ABSPATH')){
+    exit;
+}
+
+// Cancela qualquer tentativa de traduzir o plugin
+
+add_action('init', function () {
+    load_plugin_textdomain('emu-easy-attribute', false, false);
+});
 
 require_once plugin_dir_path(__FILE__) . 'includes/post-type.php';
 require_once plugin_dir_path(__FILE__) . 'includes/meta-boxes.php';
