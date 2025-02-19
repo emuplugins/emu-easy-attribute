@@ -7,19 +7,14 @@
  */
  if (!defined('ABSPATH')) exit;
 
- $plugin_slug = basename(__DIR__);
- if (substr($plugin_slug, -5) === '-main') {
-     $plugin_slug = substr($plugin_slug, 0, -5);
- }
- $self_plugin_dir = basename(__DIR__);
  
- // Sistema de atualização do plugin
+// ==============================================================================================================
+// UPDATE SYSTEM
+// ==============================================================================================================
  
- require_once plugin_dir_path(__FILE__) . 'update-handler.php';
- 
- new Emu_Updater($plugin_slug, $self_plugin_dir);
+require_once plugin_dir_path(__FILE__) . 'update-handler.php';
 
-// Carrega os arquivos necessários
+// Load backend files
 
 require_once plugin_dir_path(__FILE__) . 'includes/post-type.php';
 require_once plugin_dir_path(__FILE__) . 'includes/meta-boxes.php';
