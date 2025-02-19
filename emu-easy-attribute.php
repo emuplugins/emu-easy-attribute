@@ -11,9 +11,9 @@
 // ==============================================================================================================
 // UPDATE SYSTEM
 // ==============================================================================================================
- 
-require_once plugin_dir_path(__FILE__) . 'update-handler.php';
-
+if (is_admin()) {
+    require_once plugin_dir_path(__FILE__) . 'update-handler.php';
+}
 // Load backend files
 
 require_once plugin_dir_path(__FILE__) . 'includes/post-type.php';
